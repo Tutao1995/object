@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8">
+	<title>Document</title>
+	<style>
+		*{padding:0;margin:0;}
+		ul,li{list-style: none;}
+		#banner{width: 520px;height: 280px;margin:50px auto 0;position: relative;}
+		#pic{width: 520px;height: 280px;}
+		#pic img{position: absolute;top:0;left: 0;display: none;}
+		#btn button{width: 30px;height: 40px;background: rgba(0,0,0,0.7);position: absolute;top:50%;margin-top: -20px;outline: none;border:0;font-size:24px;text-align: center;line-height: 40px;color: #fff;cursor: pointer}
+		#left{left: 10px;}
+		#right{right: 10px;}
+		#list{width:100px;height:10px;position: absolute;left: 50%;margin-left: -50px;bottom: 18px;}
+		#list li{width: 10px;height: 10px;background: gray;border-radius: 50%;margin:0 5px;float: left;cursor: pointer;}
+		.on{background: #f60!important;}
+	</style>
+</head>
+<body>
+	<div id="banner">
+	    <div id="pic">
+		    <img src="images/1.jpg">
+		    <img src="images/2.jpg">
+		    <img src="images/3.jpg">
+		    <img src="images/4.jpg">
+		    <img src="images/5.jpg">
+	    </div>
+	    <div id="btn">
+		    <button id="left"><</button>
+		    <button id="right">></button>
+	    </div>
+	    <div id="list">
+	    	<ul id="l_ul"><li></li><li></li><li></li><li></li><li></li></ul>
+	    </div>
+	</div>
+
+	<script>
+		/*var bannerDom = document.getElementById("banner");
+		var liDoms = document.getElementById("l_ul").children;
+		var imgDoms = document.getElementById("pic").children;
+		var btnDoms = document.getElementById("btn").children;
+		var length = liDoms.length;
+		imgDoms[0].style.display = "block";
+		liDoms[0].className = "on";
+		var index = 0;
+		var timer = null;
+		auto();
+		for(var i=0;i<length;i++){
+			liDoms[i].i = i;
+			liDoms[i].onclick = function(){
+				var $this = this;
+				change(function(){
+					index = $this.i;
+				});
+			}
+		}
+		for(var i=0;i<btnDoms.length;i++){
+			btnDoms[i].i = i;
+			//防止连续点击选中
+			btnDoms[i].onselectstart = function(){return false};
+			btnDoms[i].onclick = function(){
+				var $this = this;
+				change(function(){
+					if($this.i){//点击右按钮
+						index++;
+						index %= length;
+					}else{//点击左按钮
+						index--;
+						if(index<0)index = length-1;
+					}
+				});
+			}
+		}
+
+		//轮播自动播放
+		function auto(){
+			timer = setInterval(function(){
+				change(function(){
+					index++;
+					index %= length;
+				});
+			},1000);
+		};
+		bannerDom.onmouseover = function(){
+			clearInterval(timer);
+		};
+		bannerDom.onmouseout = function(){
+			auto();
+		};
+		//封装change
+		function change(fn){
+			imgDoms[index].style.display = "";
+			liDoms[index].className = "";
+			fn&&fn();
+			imgDoms[index].style.display = "block";
+			liDoms[index].className = "on";
+		}*/
+
+
+
+		//面向对象banner
+		var bannerDom = document.getElementById("banner");
+		var liDoms = document.getElementById("l_ul").children;
+		var imgDoms = document.getElementById("pic").children;
+		var btnDoms = document.getElementById("btn").children;
+		// var length = liDoms.length;
+		// var index = 0;
+		// var timer = null;
+		function Banner(a,b,c,d){
+			this.bannerDom = a;
+			this.imgDoms = b;
+			this.liDoms = c;
+			this.btnDoms = d;
+			this.length = this.liDoms.length;
+			this.index = 0;
+			this.timer = null;
+			this.init();//调用初始化方法
+		};
+
+		/*
+			初始化的
+			imgDoms[0].style.display = "block";
+			liDoms[0].className = "on";
+		*/
+		Banner.prototype.init = function(){
+			this.imgDoms[0].style.display = "block";
+			this.liDoms[0].className = "on";
+			this.change();
+			this.liClick();//调用liClick
+			this.btnClick();//调用btnClick
+			this.auto();//调用auto
+			this.mouseMove();//调用鼠标移入移出事件
+		};
+
+		/*
+			封装change
+		*/
+		Banner.prototype.change = function(fn){
+			this.imgDoms[this.index].style.display = "";
+			this.liDoms[this.index].className = "";
+			fn&&fn();
+			this.imgDoms[this.index].style.display = "block";
+			this.liDoms[this.index].className = "on";
+		};
+
+		/*
+			鼠标点击li元素触发事件
+		*/
+		Banner.prototype.liClick = function(){
+			var bThis = this;
+			for(var i=0;i<bThis.length;i++){
+				bThis.liDoms[i].i = i;
+				bThis.liDoms[i].onclick = function(){
+					var $this = this;
+					bThis.change(function(){
+						bThis.index = $this.i;
+					});
+				}
+			}
+		};
+
+		/*
+			鼠标点击btn触发事件
+		*/
+
+		Banner.prototype.btnClick = function(){
+			var bThis = this;
+			for(var i=0;i<btnDoms.length;i++){
+				bThis.btnDoms[i].i = i;
+				//防止连续点击选中
+				bThis.btnDoms[i].onselectstart = function(){return false};
+				bThis.btnDoms[i].onclick = function(){
+					var $this = this;
+					bThis.change(function(){
+						if($this.i){//点击右按钮
+							bThis.index++;
+							bThis.index %= bThis.length;
+						}else{//点击左按钮
+							bThis.index--;
+							if(bThis.index<0)bThis.index = bThis.length-1;
+						}
+					});
+			}
+		}
+		};
+
+		/*
+			自动轮播
+		*/
+
+		Banner.prototype.auto = function(){
+			var bThis = this;
+			bThis.timer = setInterval(function(){
+				bThis.change(function(){
+					bThis.index++;
+					bThis.index %= bThis.length;
+				});
+			},1000);
+		};
+
+		/*
+			鼠标移入移出事件
+		*/
+		Banner.prototype.mouseMove = function(){
+			var bThis = this;
+			bThis.bannerDom.onmouseover = function(){
+				clearInterval(bThis.timer);
+			};
+			bThis.bannerDom.onmouseout = function(){
+				bThis.auto();
+			};
+		};
+		new Banner(bannerDom,imgDoms,liDoms,btnDoms);
+	</script>
+</body>
+</html>
